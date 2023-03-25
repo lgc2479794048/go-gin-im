@@ -1,14 +1,20 @@
+/*
+ * @Author: lgc2479794048 lgc2479794048@gmail.com
+ * @Date: 2023-03-25 14:32:48
+ * @LastEditors: lgc2479794048 lgc2479794048@gmail.com
+ * @LastEditTime: 2023-03-25 23:35:13
+ * @FilePath: \go-gin-im\main.go
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"go-gin-im/router"
+)
 
 func main() {
-	r := gin.Default()
-	// 定义一个路径为 /ping 的 GET 格式路由，并返回 JSON 数据
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Welcome to my world !",
-		})
-	})
-	r.Run() // 启动服务，并监听 8080 端口
+	// 启动App
+	router.AppStart()
 }

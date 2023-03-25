@@ -1,0 +1,7 @@
+[app]
+name = "go-gin-im"
+version = "1.0.0"
+debug = true
+[server]
+Mode = "test"
+port = 8080

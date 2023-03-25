@@ -2,8 +2,8 @@
  * @Author: lgc2479794048 lgc2479794048@gmail.com
  * @Date: 2023-03-25 14:47:34
  * @LastEditors: lgc2479794048 lgc2479794048@gmail.com
- * @LastEditTime: 2023-03-25 14:53:40
- * @FilePath: \go-gin-im\test\gorm_test.go
+ * @LastEditTime: 2023-03-25 23:27:44
+ * @FilePath: \go-gin-im\test\db_test.go
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -12,16 +12,14 @@ package test
 
 import (
 	"fmt"
-	"gp-gin-im/models"
+	"go-gin-im/config"
+	"go-gin-im/models"
 	"testing"
-
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
-func TestGorm(t *testing.T) {
+func TestGormDb(t *testing.T) {
 	// 连接数据库
-	db, err := gorm.Open(mysql.Open("root:123456@tcp(127.0.0.1:3306)/test_db?charset=utf8mb4&parseTime=True&loc=Local"), &gorm.Config{})
+	db, err := config.NewMysqlInstance("db_go_gin_im")
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -45,7 +43,7 @@ func TestGorm(t *testing.T) {
 	fmt.Println(users)
 
 	// 更新数据
-	db.Model(&user).Update("Sex", 2)
+	db.Model(&user).Update("Age", 25)
 	db.Find(&users)
 	fmt.Println(users)
 
