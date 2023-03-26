@@ -12,24 +12,20 @@ package test
 
 import (
 	"context"
+	"fmt"
+	"go-gin-im/config"
 	"log"
 	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 func TestUpload(t *testing.T) {
 	// 初始化Minio客户端
-	endpoint := "localhost:9071"
-	accessKey := "lingengcheng"
-	secretKey := "12345678"
-	useSSL := false
-	minioClient, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
-		Secure: useSSL,
-	})
+	minioClient, err := config.NewMinioClient()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -50,8 +46,15 @@ func TestUpload(t *testing.T) {
 	}
 
 	// 上传本地文件
-	localFilePath := "C:/Users/24797/Pictures/4781442-d6a8c2e5714b4c44.png"
-	objectName := "image.jpg"
+	localFilePath := "test_image.png"
+	// 生成uuid
+	u1, err := uuid.NewRandom()
+	if err != nil {
+		return
+	}
+	// 获取文件后缀
+	fileExtension := filepath.Ext(localFilePath)
+	objectName := fmt.Sprintf("%s%s", u1, fileExtension)
 	contentType := "image/jpeg"
 	f, err := os.Open(localFilePath)
 	if err != nil {

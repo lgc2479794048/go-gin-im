@@ -1,0 +1,5 @@
+#Minio存储配置配置
+endpoint= "localhost:9070"
+access_key= "lingengcheng"
+secret_key= "12345678"
+use_ssl=false

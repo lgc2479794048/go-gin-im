@@ -19,6 +19,8 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -55,6 +57,13 @@ type DbConfig struct {
 	User     string `toml:"user"`
 	Password string `toml:"password"`
 	Database string `toml:"database"`
+}
+type MinioConfig struct {
+	// MinIO服务的端点、访问密钥ID和秘密访问密钥
+	EndPoint        string `toml:"endpoint"`
+	AccessKeyID     string `toml:"access_key"`
+	SecretAccessKey string `toml:"secret_key"`
+	UseSSl          bool   `toml:"user_ssl"`
 }
 
 func LoadDbConfig(confName string) (*DbConfig, error) {
@@ -112,4 +121,32 @@ func autoMatchDir() string {
 	}
 	fmt.Println(wd)
 	return wd
+}
+
+func LoadMinioConfig() (*MinioConfig, error) {
+	config := &MinioConfig{}
+	filename := filepath.Join(rootDir + "/config/minio/minio.toml")
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	if err := toml.Unmarshal(data, config); err != nil {
+		return nil, err
+	}
+	return config, nil
+}
+
+func NewMinioClient() (*minio.Client, error) {
+	config, err := LoadMinioConfig()
+	if err != nil {
+		return nil, err
+	}
+	minioClient, err := minio.New(config.EndPoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(config.AccessKeyID, config.SecretAccessKey, ""),
+		Secure: config.UseSSl,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return minioClient, nil
 }
