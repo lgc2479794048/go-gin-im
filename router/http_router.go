@@ -2,7 +2,7 @@
  * @Author: lgc2479794048 lgc2479794048@gmail.com
  * @Date: 2023-03-25 15:04:47
  * @LastEditors: lgc2479794048 lgc2479794048@gmail.com
- * @LastEditTime: 2023-03-25 23:33:42
+ * @LastEditTime: 2023-03-26 14:07:29
  * @FilePath: \go-gin-im\router\http_router.go
  * @Description:
  *
@@ -15,6 +15,8 @@ import (
 	"go-gin-im/config"
 	"net/http"
 	_ "net/http/pprof"
+
+	userController "go-gin-im/controller/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +34,7 @@ func AppStart() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r := InitRouter()
+	// r.Use(middleware.ErrorHandler())
 	r.Run(fmt.Sprintf(":%d", appConfig.Server.Port)) // 启动服务，并监听 8080 端口
 }
 
@@ -46,11 +49,8 @@ func InitRouter() *gin.Engine {
 	api := router.Group("/go-gin-im/user")
 	{
 		// 定义接口路由
-		api.GET("/login", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "Hello, World!",
-			})
-		})
+		api.POST("/register", userController.Register) // 注册接口
+		api.GET("/login", userController.Login)        // 登录接口
 	}
 
 	// 返回 Gin 实例

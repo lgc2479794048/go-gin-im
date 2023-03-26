@@ -13,13 +13,14 @@ package test
 import (
 	"fmt"
 	"go-gin-im/config"
+	"go-gin-im/constant"
 	"go-gin-im/models"
 	"testing"
 )
 
 func TestGormDb(t *testing.T) {
 	// 连接数据库
-	db, err := config.NewMysqlInstance("db_go_gin_im")
+	db, err := config.NewMysqlInstance(constant.DB_GO_GIN_IM_SERVICE_NAME)
 	if err != nil {
 		panic("failed to connect database")
 	}
