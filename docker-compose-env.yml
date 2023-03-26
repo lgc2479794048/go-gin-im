@@ -48,6 +48,25 @@ services:
     networks:
       - go_gin_im_net
 
+  minio:
+    image:  quay.io/minio/minio:RELEASE.2021-11-09T03-21-45Z
+    container_name: minio
+    environment:
+      - MINIO_ACCESS_KEY=lingengcheng
+      - MINIO_SECRET_KEY=12345678
+    command: server --console-address ':9001' /data
+    volumes:
+      - ./data/minio/data:/data
+      - ./data/minio/config:/root/.minio/
+      - /etc/localtime:/etc/localtime
+    ports:
+      - "9070:9000"
+      - "9071:9001"
+    restart: always
+    networks:
+      - go_gin_im_net
+    
+
 
 networks:
   go_gin_im_net:
