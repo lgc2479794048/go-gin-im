@@ -12,23 +12,18 @@ package upload
 
 import (
 	"context"
+	"go-gin-im/config"
+	"go-gin-im/models/upload"
 	"log"
-	"os"
 
+	"github.com/gin-gonic/gin"
+	"github.com/gogf/gf/util/gconv"
+	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-func UploadToMinio() {
-	// 初始化Minio客户端
-	endpoint := "localhost:9000"
-	accessKey := "lingengcheng"
-	secretKey := "12345678"
-	useSSL := false
-	minioClient, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
-		Secure: useSSL,
-	})
+func UploadToMinio(c *gin.Context, param upload.UploadParam) (minio.UploadInfo, error) {
+	minioClient, err := config.NewMinioClient()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -48,18 +43,18 @@ func UploadToMinio() {
 		log.Printf("Bucket '%s' created successfully.\n", bucketName)
 	}
 
-	// 上传本地文件
-	localFilePath := "C:/Users/24797/Pictures/4781442-d6a8c2e5714b4c44.png"
-	objectName := "image.jpg"
-	contentType := "image/jpeg"
-	f, err := os.Open(localFilePath)
+	contentType := param.ContentType
+	uuid, _ := uuid.NewRandom()
+	objectName := gconv.String(uuid) + contentType
+	f, err := param.FileHeader.Open()
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer f.Close()
-	_, err = minioClient.PutObject(context.Background(), bucketName, objectName, f, -1, minio.PutObjectOptions{ContentType: contentType})
+	info, err := minioClient.PutObject(context.Background(), bucketName, objectName, f, -1, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	log.Printf("File '%s' uploaded successfully.\n", objectName)
+	return info, nil
 }

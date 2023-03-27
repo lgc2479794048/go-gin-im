@@ -16,6 +16,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
+	uploadController "go-gin-im/controller/upload"
 	userController "go-gin-im/controller/user"
 
 	"github.com/gin-gonic/gin"
@@ -51,6 +52,10 @@ func InitRouter() *gin.Engine {
 		// 定义接口路由
 		api.POST("/register", userController.Register) // 注册接口
 		api.GET("/login", userController.Login)        // 登录接口
+	}
+	uploadApi := router.Group("/go-gin-im/upload")
+	{
+		uploadApi.POST("/uploadFile", uploadController.Upload) // 上传文件接口
 	}
 
 	// 返回 Gin 实例
