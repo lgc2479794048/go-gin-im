@@ -15,6 +15,7 @@ import (
 	"go-gin-im/config"
 	"go-gin-im/models/upload"
 	"log"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gogf/gf/util/gconv"
@@ -44,8 +45,11 @@ func UploadToMinio(c *gin.Context, param upload.UploadParam) (minio.UploadInfo, 
 	}
 
 	contentType := param.ContentType
+	// 文件名用uuid作为前缀
 	uuid, _ := uuid.NewRandom()
-	objectName := gconv.String(uuid) + contentType
+	// 获取文件后缀名
+	ext := filepath.Ext(param.FileHeader.Filename)
+	objectName := gconv.String(uuid) + ext
 	f, err := param.FileHeader.Open()
 	if err != nil {
 		log.Fatalln(err)
